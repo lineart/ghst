@@ -1,0 +1,19 @@
+schema {
+  query: Query
+}
+
+type Query {
+  repoById(id: Int): Repo
+  repos(page: Int): [Repo]
+  reposTrending: [Repo]
+}
+
+type Repo {
+  id: Int
+  name: String
+  fullName: String
+  description: String
+  url: String
+  createdAt: String
+  stargazersCount: Int
+}

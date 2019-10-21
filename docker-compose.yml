@@ -1,0 +1,51 @@
+version: "3.7"
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ghst
+      POSTGRES_PASSWORD: Gh0stBu5t3rs
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - private
+
+  service:
+    build: ./ghst-service
+    environment:
+      DB_HOST: db
+    depends_on:
+      - db
+    networks:
+      - private
+
+  webapp:
+    build: ./ghst-webapp
+    environment:
+      SERVICE_BASE_URL: http://service:8080
+    depends_on:
+      - service
+    ports: 
+      - "8888:8888"
+    networks:
+      - public
+      - private
+
+  crawler:
+    build: ./ghst-crawler
+    environment:
+      SERVICE_BASE_URL: http://service:8080
+      REPO_AGE_DAYS: 7
+    depends_on:
+      - service
+    networks:
+      - private
+
+volumes:
+  db-data:
+
+networks:
+  private:
+  public:
+
